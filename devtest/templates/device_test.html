@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Device Test</title>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        text-align: center;
+        padding: 50px;
+    }
+
+    h1 {
+        font-size: 36px;
+        color: #333;
+    }
+
+    p {
+        font-size: 18px;
+        color: #666;
+    }
+</style>
+</head>
+<body>
+    <h1>Device Test</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <label for="testType">Select Test Type</label>
+        <select name="testType" id="testType">
+            <option value="ping">Ping Test</option>
+            <option value="iperf">Iperf Test</option>
+        </select>
+        <label for="deviceIP">Device IP Address</label>
+        <input type="text" name="deviceIP" id="deviceIP" required>
+        <button type="submit">Test Device</button>
+    </form>
+    {% if result %}
+        <h2>Test Result:</h2>
+        <pre>{{ result }}</pre>
+    {% endif %}
+</body>
+</html>

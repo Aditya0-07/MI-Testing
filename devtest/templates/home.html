@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechRoute Sign In</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        body {
+            font-family: 'Poppins', Arial, sans-serif; /* Added a modern font */
+            background-image: url('{% static "images/download 3.png" %}'); /* Ensure correct path */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        .form-container {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(240, 240, 240, 0.9)); /* Soft gradient */
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Softer, more modern shadow */
+            padding: 40px;
+            width: 400px;
+            max-width: 90%; /* Responsive for smaller screens */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            position: relative;
+            transition: transform 0.3s ease; /* Added smooth hover effect */
+        }
+
+        .form-container:hover {
+            transform: scale(1.02); /* Subtle scaling effect */
+        }
+
+        .suggestions {
+            border: 1px solid #ccc;
+            max-height: 100px;
+            overflow-y: auto;
+            display: none;
+            position: absolute;
+            background-color: white;
+            z-index: 1;
+            width: calc(100% - 20px);
+            margin-top: 5px;
+            border-radius: 8px; /* Rounded corners for suggestions */
+        }
+
+        .suggestions div {
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .suggestions div:hover {
+            background-color: #f1f1f1; /* Slight hover effect for suggestions */
+        }
+
+        input[type="text"], input[type="password"], select {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            background-color: #fafafa; /* Light background for input */
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, select:focus {
+            border-color: #007bff; /* Highlight input on focus */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #333; /* Keep label text crisp */
+            font-size: 14px;
+        }
+
+        .switch {
+            display: flex;
+            align-items: center;
+            margin: 12px 0;
+        }
+
+        .switch input {
+            display: none;
+        }
+
+        .slider {
+            position: relative;
+            width: 40px;
+            height: 22px;
+            background-color: #ccc;
+            border-radius: 34px;
+            transition: background-color 0.2s;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        input:checked + .slider {
+            background-color: #28a745; /* Softer green for the slider */
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(18px);
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 26px;
+            text-align: center;
+            color: #007bff; /* Added color for the title */
+        }
+
+        /* Responsive for smaller screens */
+        @media (max-width: 600px) {
+            body {
+                padding: 20px;
+            }
+
+            .form-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>SYSTROME</h2>
+        <div style="position: relative;">
+            <label for="username">Username</label>
+            <input type="text" id="username" onkeyup="showSuggestions(this.value)">
+            <div id="suggestions" class="suggestions"></div>
+        </div>
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password">
+        </div>
+        <div>
+            <label for="switchModel">Select Switch Model</label>
+            <select id="switchModel">
+                <option value="" disabled selected>Select a model</option>
+                <option value="Model A">Model A</option>
+                <option value="Model B">Model B</option>
+                <option value="Model C">Model C</option>
+                <option value="Model D">Model D</option>
+            </select>
+        </div>
+        <div class="switch">
+            <label for="adminSwitch">Admin Login</label>
+            <input type="checkbox" id="adminSwitch">
+            <span class="slider"></span>
+        </div>
+        <input type="submit" value="Sign In" onclick="signIn()">
+    </div>
+
+    <script>
+        const usersDatabase = ['Alice', 'Bob', 'Charlie', 'David', 'Edward', 'Fiona', 'George', 'Hannah'];
+
+        function showSuggestions(input) {
+            const suggestionsBox = document.getElementById('suggestions');
+            suggestionsBox.innerHTML = '';
+            if (input.length < 1) {
+                suggestionsBox.style.display = 'none';
+                return;
+            }
+            const filteredUsers = usersDatabase.filter(user => user.toLowerCase().startsWith(input.toLowerCase()));
+            if (filteredUsers.length > 0) {
+                suggestionsBox.style.display = 'block';
+                filteredUsers.forEach(user => {
+                    const suggestionDiv = document.createElement('div');
+                    suggestionDiv.textContent = user;
+                    suggestionDiv.onclick = () => selectUser(user);
+                    suggestionsBox.appendChild(suggestionDiv);
+                });
+            } else {
+                suggestionsBox.style.display = 'none';
+            }
+        }
+
+        function selectUser(user) {
+            document.getElementById('username').value = user;
+            document.getElementById('suggestions').style.display = 'none';
+        }
+
+        function signIn() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const model = document.getElementById('switchModel').value;
+
+            // Basic validation
+            if (username && password && model) {
+                window.location.href = "{% url 'device_test' %}";
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+
+        window.onclick = function(event) {
+            const suggestionsBox = document.getElementById('suggestions');
+            if (!event.target.matches('#username')) {
+                suggestionsBox.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
